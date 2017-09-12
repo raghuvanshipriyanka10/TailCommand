@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <title>File Stram Output</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var socket = io('http://localhost:9099');
+            var container = $('#container');
+            socket.on('new-data', function (data) {
+                var newItem = $('<div><h4>' + 'File Name: ' + data.title + '</h4> <br>' + data.value + '</div>');
+                container.append(newItem);
+                $("html, body").animate({ scrollTop: $(document).height() },'fast');
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="container">
+    </div>
+</body>
+
+</html>

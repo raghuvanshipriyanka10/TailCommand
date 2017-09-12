@@ -1,0 +1,14 @@
+{
+  "name": "filesystem-tail-demo",
+  "version": "0.1.0",
+  "description": "File system tail application",
+  "author": {
+    "name": "Priyanka Raghuvanshi"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "socket.io": "^2.0.3",
+    "tail": "^1.2.2"
+  }
+}
