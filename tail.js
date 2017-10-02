@@ -1,5 +1,4 @@
 var fs = require('fs');
-const Tail = require('tail').Tail;
 var app = require('http').createServer(handler)
 var io = require('socket.io')(app);
 
@@ -26,13 +25,31 @@ var stdin = process.openStdin();
 stdin.addListener("data", function(d) {
     
         filepath=d.toString().trim();
-        var tail = new Tail(filepath);
-        tail.watch()
 
-        tail.on("line", data => {
-          console.log(data);
-          io.sockets.emit('new-data', { title: filepath, value: data });
-        });
+        var fNameStat = new Object;
+        
+        fNameStat = fs.statSync(filepath);
+
+        console.log('watching ' + filepath + ' bytes: ' + fNameStat.size);
+
+        fs.watch(filepath, function (event, filename) {
+          var fNameStatChanged = fs.statSync(filepath);
+          console.log('file changed from ' + fNameStat.size + ' to ' + fNameStatChanged.size);
+      
+          fs.open(filepath, 'r', function(err, fd) {
+            var newDataLength = fNameStatChanged.size - fNameStat.size;
+            var buffer = new Buffer(newDataLength, 'utf-8');
+            fs.read(fd, buffer, 0, newDataLength, fNameStat.size, function (err, bytesRead, newData) {
+               if (err) {
+                  console.log(err);
+               };
+               io.sockets.emit('new-data', { title: filepath, value: newData });
+      
+            });
+            fNameStat = fs.statSync(fName);
+          });
+      
+        }); 
   });
   
   console.log('Please enter file name');
